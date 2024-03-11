@@ -3,13 +3,13 @@ import type {
   loboCustomerSchema,
   loboInvoiceSchema,
 } from "../lobo/schemas.lobo.js";
+import { truncate } from "../truncate.text.js";
 import { fetchBexio } from "./connection.bexio.js";
 import {
   bexioInvoiceSchema,
   type bexioContactSchema,
   type bexioCreateInvoiceSchema,
 } from "./schemas.bexio.js";
-import { truncate } from "../truncate.text.js";
 
 export async function createBexioInvoiceForLoboInvoice({
   customer,
@@ -95,12 +95,16 @@ export async function createBexioInvoiceForLoboInvoice({
       schema: bexioInvoiceSchema,
     }
   );
-  await fetchBexio(
-    `/2.0/kb_invoice/${invoice.id}/issue`,
+  await issueBexioInvoice(invoice.id);
+  return invoice;
+}
+
+export async function issueBexioInvoice(id: number) {
+  return await fetchBexio(
+    `/2.0/kb_invoice/${id}/issue`,
     { method: "POST" },
     {
       schema: z.object({ success: z.boolean() }),
     }
   );
-  return invoice;
 }

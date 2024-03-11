@@ -18,7 +18,8 @@ export async function fetchBexio<S extends z.ZodTypeAny>(
 async function privatefetchBexio<S extends z.ZodTypeAny>(
   path: string,
   init: RequestInit,
-  { schema }: { schema: S }
+  { schema }: { schema: S },
+  retry = true
 ): Promise<z.infer<S>> {
   const token = process.env["BEXIO_TOKEN"];
   const headers = new Headers(init.headers);
@@ -31,6 +32,14 @@ async function privatefetchBexio<S extends z.ZodTypeAny>(
   });
 
   if (!result.ok) {
+
+    if (result.status >= 500 && retry) {
+      console.log(`Bexio fetch error: ${result.status} ${result.statusText}`);
+      console.log("retrying after delay...");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return await privatefetchBexio(path, init, { schema }, false);
+    }
+
     console.log(`Bexio fetch error: ${result.status} ${result.statusText}`);
     console.log(await result.text());
     throw new Error("Could not fetch bexio");
