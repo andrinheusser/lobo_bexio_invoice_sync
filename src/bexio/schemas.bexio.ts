@@ -21,7 +21,7 @@ export const bexioContactSchema = z.object({
   name_1: z.string(),
   name_2: z.string().nullable(),
   salutation_id: z.number().nullable(),
-  salutation_form: z.string().nullable(),
+  salutation_form: z.number().nullable(),
   title_id: z.number().nullable(),
   birthday: z.string().nullable(),
   address: z.string().nullable(),
