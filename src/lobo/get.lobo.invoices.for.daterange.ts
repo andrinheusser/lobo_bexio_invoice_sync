@@ -2,6 +2,10 @@ import type { z } from "zod";
 import { fetchLobo } from "./connection.lobo.js";
 import { getLoboApiResponseSchema, loboInvoiceSchema } from "./schemas.lobo.js";
 
+const onlySyncIfPaidAtAfter = process.env["ONLY_SYNC_IF_PAID_AT_AFTER"]
+  ? new Date(process.env["ONLY_SYNC_IF_PAID_AT_AFTER"])
+  : null;
+
 export async function* getLoboInvoicesForDateranges(
   dateranges: [start: Date, end: Date][]
 ): AsyncGenerator<{
@@ -12,7 +16,7 @@ export async function* getLoboInvoicesForDateranges(
   for (const [startDate, endDate] of dateranges) {
     const search = new URLSearchParams({
       "invoicedate[gte]": startDate.toISOString().slice(0, 10),
-      "invoicedate[lt]": endDate.toISOString().slice(0, 10),
+      "invoicedate[lte]": endDate.toISOString().slice(0, 10),
     });
 
     const monthName = startDate.toLocaleDateString("de-CH", {
@@ -26,6 +30,14 @@ export async function* getLoboInvoicesForDateranges(
       { schema: getLoboApiResponseSchema(loboInvoiceSchema) }
     );
     for (const invoice of invoices.data) {
+      if (
+        onlySyncIfPaidAtAfter &&
+        invoice.paymentdate &&
+        invoice.paymentdate.length > 0 &&
+        new Date(invoice.paymentdate) < onlySyncIfPaidAtAfter
+      ) {
+        continue;
+      }
       yield {
         invoice,
         monthName,

@@ -1,22 +1,26 @@
+const startSyncDate = process.env["START_SYNC_DATE"]
+  ? new Date(process.env["START_SYNC_DATE"])
+  : new Date();
+const stopSyncDate = process.env["STOP_SYNC_DATE"]
+  ? new Date(process.env["STOP_SYNC_DATE"])
+  : null;
 export function getDaterangeForInvoices(): [Date, Date][] {
-  return Array.from(
-    { length: +(process.env["NUM_MONTHS_TO_SYNC"] ?? 12) },
-    (_, i): [Date, Date] => {
-      const startDate = new Date();
-      let nextMonth =
-        startDate.getMonth() - 1 < 0 ? 11 : startDate.getMonth() - i;
-      startDate.setMonth(nextMonth);
-      startDate.setDate(1);
-      startDate.setHours(12);
-      startDate.setMinutes(0);
-      startDate.setSeconds(1);
-      const endDate = new Date(startDate);
-      endDate.setMonth(startDate.getMonth() + 1);
-      return [startDate, endDate];
+  const ranges: [Date, Date][] = [];
+
+  for (let i = 0; i < +(process.env["NUM_MONTHS_TO_SYNC"] ?? 12); i++) {
+    let endDate = new Date(
+      startSyncDate.getFullYear(),
+      startSyncDate.getMonth() - i + 1,
+      0
+    );
+    if (endDate > startSyncDate) endDate = startSyncDate;
+    let startDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+
+    if (stopSyncDate && startDate < stopSyncDate) {
+      if (endDate < stopSyncDate) continue;
+      startDate = stopSyncDate;
     }
-  ).filter(([start]) => {
-    const stopSyncDate = process.env["STOP_SYNC_DATE"];
-    if (!stopSyncDate) return true;
-    return start.getTime() > new Date(stopSyncDate).getTime();
-  });
+    ranges.push([startDate, endDate]);
+  }
+  return ranges;
 }

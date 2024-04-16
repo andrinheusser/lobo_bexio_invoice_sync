@@ -37,7 +37,10 @@ export async function createBexioInvoiceForLoboInvoice({
       amount: "1",
       text: "Dienstleistungen",
       discount_in_percent: "0.0000",
-      tax_id: +(process.env["BEXIO_INVOICE_REVENUE_TAX_ID"] ?? 1),
+      tax_id:
+        new Date(loboInvoice.invoicedate).getFullYear() < 2024
+          ? +(process.env["BEXIO_INVOICE_PRE_2024_REVENUE_TAX_ID"] ?? 1)
+          : +(process.env["BEXIO_INVOICE_REVENUE_TAX_ID"] ?? 1),
       unit_id: +(process.env["BEXIO_INVOICE_UNIT_ID"] ?? 1),
       unit_price: (loboInvoice.invoice_total - loboInvoice.expenditures_total)
         .toFixed(2)
