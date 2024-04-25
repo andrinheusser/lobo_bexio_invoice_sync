@@ -39,6 +39,7 @@ async function login({
     console.log(
       `Lobo login error: ${loginResponse.status} ${loginResponse.statusText}`
     );
+    console.log(await loginResponse.text());
     throw new Error("login failed");
   }
   const loginJson = tokenResponseSchema.parse(await loginResponse.json());
