@@ -25,7 +25,7 @@ export async function createBexioInvoiceForLoboInvoice({
     "de-CH",
     { month: "short", year: "2-digit" }
   );
-  const title = truncate(`${invoiceMonth} ${customer.lobo.name}`, 79);
+  const title = truncate(`${loboInvoice.numberformatted} ${invoiceMonth} ${customer.lobo.name}`, 79);
 
   const days_valid = +(loboInvoice.paymentterm.split(" ")[0] ?? 30);
   let validToDate = new Date(loboInvoice.created);
