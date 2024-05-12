@@ -28,7 +28,10 @@ export async function* getLoboInvoicesForDateranges(
       `/invoices?${search.toString()}`,
       {},
       { schema: getLoboApiResponseSchema(loboInvoiceSchema) }
-    );
+    ).catch(() => {
+      console.log(`Error fetching invoices for ${monthName}`);
+      return { data: [] };
+    });
     for (const invoice of invoices.data) {
       if (
         onlySyncIfPaidAtAfter &&

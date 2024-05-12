@@ -5,8 +5,8 @@ export async function markLoboInvoiceAsPaid(
   invoiceId: number,
   paymentDate: Date,
   noteprivate: string
-) {
-  return await fetchLobo(
+): Promise<void> {
+  await fetchLobo(
     `/invoices/${invoiceId}`,
     {
       method: "PATCH",
@@ -18,5 +18,7 @@ export async function markLoboInvoiceAsPaid(
     {
       schema: getLoboApiResponseSchema(loboInvoiceSchema),
     }
-  );
+  ).catch((e) => {
+    console.log(`Error marking invoice invoices/${invoiceId} as paid`);
+  });
 }
