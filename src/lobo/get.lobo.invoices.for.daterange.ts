@@ -34,10 +34,6 @@ export async function* getLoboInvoicesForDateranges(
       return { data: [] };
     });
     
-    console.log(invoices);
-    
-
-
     for (const invoice of invoices.data) {
       if (
         onlySyncIfPaidAtAfter &&

@@ -3,7 +3,7 @@ import { type z } from "zod";
 
 const queue = new PQueue({
   concurrency: 1,
-  interval: 60000 / 199,
+  interval: 500,
   intervalCap: 1,
 });
 
