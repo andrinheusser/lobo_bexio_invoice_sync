@@ -11,7 +11,9 @@ export function shouldUpdateBexioContact(
 
   if (newBexioContact.name_1 !== bexioContact.name_1) return true;
   if (newBexioContact.name_2 !== bexioContact.name_2) return true;
-  if (newBexioContact.address !== bexioContact.address) return true;
+  if (newBexioContact.street_name !== bexioContact.street_name) return true;
+  if (newBexioContact.house_number !== bexioContact.house_number) return true;
+  if (newBexioContact.address_addition !== bexioContact.address_addition) return true;
   if (newBexioContact.postcode !== bexioContact.postcode) return true;
   if (newBexioContact.city !== bexioContact.city) return true;
   if (newBexioContact.mail !== bexioContact.mail) return true;

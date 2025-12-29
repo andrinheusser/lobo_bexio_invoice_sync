@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import type { loboCustomerSchema } from "../lobo/schemas.lobo.js";
-import type { bexioCreateContactSchema } from "./schemas.bexio.js";
 import { truncate } from "../truncate.text.js";
+import type { bexioCreateContactSchema } from "./schemas.bexio.js";
 
 export function buildBexioContactFromLoboCustomer(
   loboCustomer: z.infer<typeof loboCustomerSchema>
@@ -10,7 +10,9 @@ export function buildBexioContactFromLoboCustomer(
     contact_type_id: 1,
     name_1: truncate(loboCustomer.name, 79),
     name_2: truncate(loboCustomer.alias, 79),
-    address: truncate(`${loboCustomer.street} ${loboCustomer.hnr_add_sfx}`, 79),
+    street_name: truncate(loboCustomer.street, 79),
+    house_number: loboCustomer.housenumber?.toString() ?? null,
+    address_addition: loboCustomer.suffix ?? null,
     postcode: loboCustomer.zip.length > 0 ? loboCustomer.zip : null,
     city: truncate(loboCustomer.city, 79),
     fax: loboCustomer.customernumber.toString(),
