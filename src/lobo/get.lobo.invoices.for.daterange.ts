@@ -4,7 +4,8 @@ import { getLoboApiResponseSchema, loboInvoiceSchema } from "./schemas.lobo.js";
 
 const onlySyncIfPaidAtAfter = process.env["ONLY_SYNC_IF_PAID_AT_AFTER"]
   ? new Date(process.env["ONLY_SYNC_IF_PAID_AT_AFTER"])
-  : null;
+//  : null;
+  : "1970-01-01T00:00:00.000Z";
 
 export async function* getLoboInvoicesForDateranges(
   dateranges: [start: Date, end: Date][]
@@ -23,7 +24,7 @@ export async function* getLoboInvoicesForDateranges(
       month: "long",
       year: "numeric",
     });
-
+    
     const invoices = await fetchLobo(
       `/invoices?${search.toString()}`,
       {},
@@ -32,6 +33,11 @@ export async function* getLoboInvoicesForDateranges(
       console.log(`Error fetching invoices for ${monthName}`);
       return { data: [] };
     });
+    
+    console.log(invoices);
+    
+
+
     for (const invoice of invoices.data) {
       if (
         onlySyncIfPaidAtAfter &&

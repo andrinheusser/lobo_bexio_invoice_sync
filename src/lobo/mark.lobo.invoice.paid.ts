@@ -19,6 +19,7 @@ export async function markLoboInvoiceAsPaid(
       schema: getLoboApiResponseSchema(loboInvoiceSchema),
     }
   ).catch((e) => {
+    console.error(e)
     console.log(`Error marking invoice invoices/${invoiceId} as paid`);
   });
 }

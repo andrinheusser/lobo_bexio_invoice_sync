@@ -89,12 +89,16 @@ async function privatefetchLobo<S extends z.ZodTypeAny>(
     user: process.env["LOBO_API_USER"] ?? "",
     pass: process.env["LOBO_API_PASS"] ?? "",
     host: process.env["LOBO_API_HOST"] ?? "",
+
   });
+
+  const url = `${process.env["LOBO_API_HOST"]}${path}`
+
   const headers = new Headers(init.headers);
   headers.set("Authorization", `Bearer ${token}`);
   headers.set("Accept", "application/json");
   headers.set("Content-Type", "application/json");
-  const result = await fetch(`${process.env["LOBO_API_HOST"]}${path}`, {
+  const result = await fetch(url, {
     ...init,
     headers,
   });

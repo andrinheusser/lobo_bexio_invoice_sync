@@ -3,7 +3,7 @@ import { type z } from "zod";
 
 const queue = new PQueue({
   concurrency: 1,
-  interval: 60000 / 499,
+  interval: 60000 / 199,
   intervalCap: 1,
 });
 
@@ -30,6 +30,8 @@ async function privatefetchBexio<S extends z.ZodTypeAny>(
     ...init,
     headers,
   });
+  
+  
 
   if (!result.ok) {
 
@@ -37,6 +39,14 @@ async function privatefetchBexio<S extends z.ZodTypeAny>(
       console.log(`Bexio fetch error: ${result.status} ${result.statusText}`);
       console.log("retrying after delay...");
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      return await privatefetchBexio(path, init, { schema }, false);
+    }
+    
+    if(result.status === 429) {
+      const remaining = result.headers.get('RateLimit-Reset');
+      const waitTime = remaining ? parseInt(remaining) * 1000 : 1000;
+      console.log(`Rate limit exceeded. Waiting for ${waitTime} ms before retrying...`);
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
       return await privatefetchBexio(path, init, { schema }, false);
     }
 
