@@ -51,6 +51,7 @@ export const bexioContactSchema = z.object({
 });
 
 export const bexioCreateInvoiceSchema = z.object({
+  document_nr: z.string(),
   title: z.string().nullable().optional(),
   contact_id: z.number(),
   user_id: z.number(),

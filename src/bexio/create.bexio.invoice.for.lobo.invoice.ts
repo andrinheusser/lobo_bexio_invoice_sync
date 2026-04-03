@@ -67,6 +67,7 @@ export async function createBexioInvoiceForLoboInvoice({
   }
 
   const bexioInvoice: z.infer<typeof bexioCreateInvoiceSchema> = {
+    document_nr: loboInvoice.numberformatted,
     title,
     contact_id: customer.bexio.id,
     user_id: +(process.env["BEXIO_INVOICE_USER_ID"] ?? 1),
